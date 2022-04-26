@@ -265,5 +265,6 @@ def save_nn(obj,filename):
     
 def load_nn(obj,filename):
     file=open('filename'+'.nn','rb')
-    pickle.load(obj,file)
-    print("Loaded")    
+    pickle.load(file)
+    print("Loaded")
+    return obj    
