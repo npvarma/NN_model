@@ -1,5 +1,5 @@
 # NN_model
-A simple barebones Neural Network model to help with courseworks. Under **continous development** for my own use as I go through the courese.
+A simple barebones Neural Network model to help with courseworks. Under **continuous development** for my own use as I go through the courses.
 
 Usage:
 
