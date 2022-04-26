@@ -31,7 +31,7 @@ Activation functions:
 
 Initilization methods (optional)
 - init: str
-- random (natural distribution), xavier, golrot
+- random (natural distribution), xavier, glorot
 
 Training Hyperparameters (to be expanded in future):
 - learning_rate: float
