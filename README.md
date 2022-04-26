@@ -24,12 +24,14 @@ Layers:
 - Layers is a Python list that is of the form:
 [number of input features, no of nodes in layer 1, no of nodes in layer 2, ... no of output features]
 
+Example: layers=[30 10 5 5 1] for a classification problem with 30 input features.3 hidden layerswith 10,5 and 5 nodes respectively. 
+
 Activation functions: 
 - act_hidden: str, default:relu
 - act_output: str, defualt:sigmoid
 - Options: relu, sigmoid, tanh, leakyrelu
 
-Initilization methods (optional)
+Initilization methods:
 - init: str
 - random (natural distribution), xavier, glorot
 
@@ -37,5 +39,14 @@ Training Hyperparameters (to be expanded in future):
 - learning_rate: float
 - iterations: int
 - conv_cost (cost function for convergence): float
-- printcost,plot: boolean
+- printcost: boolean
+- plot: boolean
 - report_freq: int
+
+Misc:
+
+To save a trained netowork with its parameters:
+> NN.save_nn(network, filename)
+
+To load a previously saved network:
+> netowrk=NN.load_nn(filename)
