@@ -1,5 +1,5 @@
 # NN_model
-A simple barebones Neural Network model to help with courseworks. Under **continuous development** for my own use as I go through the courses.
+A simple barebones Neural Network model. Under **continuous development** for my own use as I go through the courses.
 
 Usage:
 
@@ -45,7 +45,7 @@ Training Hyperparameters (to be expanded in future):
 
 Misc:
 
-To save a trained netowork with its parameters:
+To save a trained network with its parameters:
 > NN.save_nn(network, filename)
 
 To load a previously saved network:
