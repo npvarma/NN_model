@@ -41,12 +41,12 @@ class neuralnet:
         elif method == 'xavier':
             for l in range(1, L):
                 self.parameters['W'+str(l)] = np.random.randn(layers[l], layers[l-1])\
-                    * 2/layers[l]
+                    * np.sqrt(2/layers[l])
                 self.parameters['b'+str(l)] = np.zeros((layers[l], 1))
         elif method == 'glorot':
             for l in range(1, L):
                 self.parameters['W'+str(l)] = np.random.randn(layers[l], layers[l-1])\
-                    * 2/(layers[l-1]+layers[l])
+                    * np.sqrt(2/(layers[l-1]+layers[l]))
                 self.parameters['b'+str(l)] = np.zeros((layers[l], 1))
         else:
             raise ValueError
