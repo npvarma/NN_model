@@ -49,4 +49,4 @@ To save a trained network with its parameters:
 > NN.save_nn(network, filename)
 
 To load a previously saved network:
-> netowrk=NN.load_nn(filename)
+> network=NN.load_nn(filename)
