@@ -9,15 +9,15 @@ Usage:
 >NN1.lam=0.01        #lambda for L2 normalization
 >NN1.keep_prob=0.9   #keep probability for drop out
 
+>batch_size=64
 
->cost, acc_L2 = NN1.train(X_train, Y_train, learning_rate=0.01, iterations=2500, conv_cost=0.01,
-              printcost=True, plot=False, report_freq=500)
+>cost = NN1.train(X_train, Y_train, learning_rate, iterations, batch_size, conv_criteria,
+                 printoutput, plot, frequency)
               
 >Ypredict=NN1.predict(X_test)
 
 
 Description:
-
 
 - X,Y - numpy.ndarray with same no. of training examples.
 - X.shape=[no of features, no of training examples]
@@ -40,12 +40,13 @@ Initilization methods:
 
 Training Hyperparameters (to be expanded in future):
 - learning_rate: float
-- iterations: int
+- number of epochs: int
 - conv_cost (cost function for convergence): float
 - printcost: boolean
 - plot: boolean
 - report_freq: int
 - regularization - dropout and L2
+- batch size: int
 
 Misc:
 
