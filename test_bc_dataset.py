@@ -32,31 +32,30 @@ Y_test = Y_test.T
 # end data read
 
 # hyper parameters
-iterations = 10000
+iterations = 2500
 learning_rate = 0.001
 act_hidden = 'leakyrelu'
 act_output = 'sigmoid'
 init = 'xavier'
-frequency = 1000
+frequency = 500
 conv_criteria = 0.001
 printoutput = True
-plot = False
+plot = True
 n_x = X_train.shape[0]
 n_y = Y_train.shape[0]
-layers = [n_x, 5, 5, 5, n_y]
-
+layers = [n_x, 10, 10, 5, n_y]
+batch_size = 100
 # end hyper parameters
 
 NN1 = NN.neuralnet(layers, act_hidden, act_output, init)
-NN1.lam=0.00
-NN1.keep_prob=0.5
+NN1.lam = 0.000
+NN1.keep_prob = 1
 
 
+# train
 
-#train
-
-cost, acc = NN1.train(X_train, Y_train, learning_rate, iterations, conv_criteria,
-                      printoutput, plot, frequency)
+cost = NN1.train(X_train, Y_train, learning_rate, iterations, batch_size, conv_criteria,
+                 printoutput, plot, frequency)
 
 
 # print results
