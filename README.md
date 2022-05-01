@@ -1,5 +1,6 @@
 # NN_model
-A simple Neural Network model implemented in Python to learn and apply the theory. Includes regularization methods and mini-batch gradient descent. Batch normalization and multi-nominal clacissicaitions are in the pipeline and not implemented yet.
+
+A simple Neural Network model implemented in Python to learn and apply the theory. Includes regularization methods and mini-batch gradient descent suited for binomial classifcation problems. Batch normalization and multi-nomial classifications are in the pipeline and not implemented yet.
 
 Usage:
 
