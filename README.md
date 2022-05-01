@@ -6,6 +6,9 @@ Usage:
 >import NN_model as NN
 
 >NN1 = NN.neuralnet(layers, act_hidden, act_output, init)
+>NN1.lam=0.01        #lambda for L2 normalization
+>NN1.keep_prob=0.9   #keep probability for drop out
+
 
 >cost, acc_L2 = NN1.train(X_train, Y_train, learning_rate=0.01, iterations=2500, conv_cost=0.01,
               printcost=True, plot=False, report_freq=500)
@@ -42,6 +45,7 @@ Training Hyperparameters (to be expanded in future):
 - printcost: boolean
 - plot: boolean
 - report_freq: int
+- regularization - dropout and L2
 
 Misc:
 
