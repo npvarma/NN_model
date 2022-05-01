@@ -248,7 +248,7 @@ class neuralnet:
                 # return None
                 if div_warn > 2*batch_size:
                     print("Stopped due to divergence!")
-                    break
+                    return None
             elif c < cprev:
                 div_warn = 0
 
@@ -265,9 +265,16 @@ class neuralnet:
                 t1 = time.time()
                 if plot:
                     cost.append(c)
-                    plt.close()
-                    plt.plot(range(len(cost)), cost)
-                    plt.show()
+                    # plt.close()
+                    #plt.plot(range(len(cost)), cost)
+
+        if len(cost) > 0:
+            plt.close()
+            xe = np.arange(0, n_epochs, n_epochs/(len(cost)))
+            plt.plot(xe, cost)
+            plt.xlabel("epochs")
+            plt.ylabel("cost")
+            plt.show()
 
         return c
 
@@ -305,9 +312,18 @@ class neuralnet:
     def getWarray(self):
         list1 = list(self.parameters.items())
         array1 = np.array(list1, dtype=object)[:, 1]
+        array1 = array1[::2]
         warray = np.concatenate([x.ravel() for x in array1])
-        warray = warray[::2]
+
         return warray
+
+    def getbarray(self):
+        list1 = list(self.parameters.items())
+        array1 = np.array(list1, dtype=object)[:, 1]
+        array1 = array1[1::2]
+        barray = np.concatenate([x.ravel() for x in array1])
+
+        return barray
 
 
 def save_nn(obj, filename):

@@ -32,31 +32,29 @@ Y_test = Y_test.T
 # end data read
 
 # hyper parameters
-iterations = 2500
-learning_rate = 0.001
+n_epochs = 5000
+learning_rate = 0.0005
 act_hidden = 'leakyrelu'
 act_output = 'sigmoid'
 init = 'xavier'
-frequency = 500
+frequency = 100
 conv_criteria = 0.001
 printoutput = True
 plot = True
 n_x = X_train.shape[0]
 n_y = Y_train.shape[0]
-layers = [n_x, 10, 10, 5, n_y]
-batch_size = 100
+layers = [n_x, 10, 5, 5, n_y]
+batch_size = 64
 # end hyper parameters
 
+# define neural network
 NN1 = NN.neuralnet(layers, act_hidden, act_output, init)
 NN1.lam = 0.000
 NN1.keep_prob = 1
 
-
 # train
-
-cost = NN1.train(X_train, Y_train, learning_rate, iterations, batch_size, conv_criteria,
+cost = NN1.train(X_train, Y_train, learning_rate, n_epochs, batch_size, conv_criteria,
                  printoutput, plot, frequency)
-
 
 # print results
 print("Cost at the end of training:"+str(cost))

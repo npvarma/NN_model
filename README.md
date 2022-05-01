@@ -1,5 +1,5 @@
 # NN_model
-A simple barebones Neural Network model. Under **continuous development** for my own use as I go through the courses.
+A simple Neural Network model implemented in Python to learn and apply the theory. Includes regularization methods and mini-batch gradient descent. Batch normalization and multi-nominal clacissicaitions are in the pipeline and not implemented yet.
 
 Usage:
 
