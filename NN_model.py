@@ -18,7 +18,7 @@ errmin = 1e-10
 
 
 class neuralnet:
-    def __init__(self, layers, act_hidden='relu', act_output='sigmoid', init=None):
+    def __init__(self, layers, act_hidden='relu', act_output='sigmoid', init='xavier',lam=0,keep_prob=1):
         self.layers = layers
         self.act_hidden = act_hidden
         self.act_output = act_output
@@ -26,6 +26,9 @@ class neuralnet:
         self.grads = {}
         # bad idea self.globalcache=[]
         self.init = init
+        self.lam=lam
+        self.kp=keep_prob
+        self.dp=1*(keep_prob<1)
 
     def init_params(self):
         method = self.init
@@ -85,13 +88,19 @@ class neuralnet:
 
         return dZ
 
-    def fwd_layer(self, Aprev, W, b, act):
+    def fwd_layer(self, Aprev, W, b, act,l,predict):
         Z = np.dot(W, Aprev)+b
         A = self.activation(Z, act)
-        cache = (Aprev, W, b)
+        D=(self.dp*np.random.uniform(0,1,A.shape)<self.kp)
+        
+        if (predict==False and l<(len(self.layers)-1) and l>0):
+            A=np.multiply(A,D)/self.kp
+            
+        cache = (Aprev, W, b, D)
+                  
         return A, cache
 
-    def fwd_model(self, X, parameters):
+    def fwd_model(self, X, parameters,predict=False):
         layers = self.layers
         L = len(layers)
         A = X  # first layer
@@ -100,7 +109,7 @@ class neuralnet:
             W = parameters['W'+str(l)]
             b = parameters['b'+str(l)]
             A_old = copy.deepcopy(A)
-            A, cache = self.fwd_layer(A_old, W, b, self.act_hidden)
+            A, cache = self.fwd_layer(A_old, W, b, self.act_hidden,l,predict)
             globalcache.append(cache)
 
         l = L-1
@@ -108,7 +117,7 @@ class neuralnet:
         W = parameters['W'+str(l)]
         b = parameters['b'+str(l)]
         A_old = copy.deepcopy(A)
-        AL, cache = self.fwd_layer(A_old, W, b, self.act_output)
+        AL, cache = self.fwd_layer(A_old, W, b, self.act_output,l,predict)
         globalcache.append(cache)
         # print("forward complete")
         return AL, globalcache
@@ -118,16 +127,21 @@ class neuralnet:
         Y.reshape(Yh.shape)
         cost = -1/m*np.sum(np.dot(Y, np.log(np.clip(Yh.T, errmin, errmax)))+np.dot((1-Y),
                                                                                    np.log(np.clip(1-Yh, errmin, errmax).T)), axis=1)
+        Warray=self.getWarray()
+        cost=cost+self.lam/2/m*np.linalg.norm(Warray)
+        
         return np.squeeze(cost)
 
-    def backprop_layer(self, dA, cache, act):
-        Aprev, W, b = cache
+    def backprop_layer(self, dA,Dprev, cache, act,l):
+        Aprev, W, b, D = cache
         m = Aprev.shape[1]  # no of training examples=n_columns of A
         dZ = self.dz(dA, Aprev, W, b, act)
-        dW = 1/m*np.dot(dZ, Aprev.T)
+        dW = 1/m*(np.dot(dZ, Aprev.T)+self.lam*W)
         db = 1/m*np.sum(dZ, axis=1, keepdims=True)
         dA_prev = np.dot(W.T, dZ)
-
+        if (l>0) and (l<len(self.layers)-2): #no drop out for input and output layers
+            dA_prev = np.multiply(dA_prev, Dprev)/self.kp
+        
         return dA_prev, dW, db
 
     def backprop_model(self, AL, globalcache, Y):
@@ -144,10 +158,11 @@ class neuralnet:
         dA=-y/yh-(1-y)/(1-yh)
         '''
         # code for last layer begins here
-
-        current_cache = globalcache[L-2]
-        dA_prev_temp, dW_temp, db_temp = self.backprop_layer(dAL,
-                                                             current_cache, self.act_output)
+        l=L-2
+        current_cache = globalcache[l]
+        __,__,__,Dprev=globalcache[l]
+        dA_prev_temp, dW_temp, db_temp = self.backprop_layer(dAL,Dprev,
+                                                             current_cache, self.act_output,l)
         # self.grads["dA" + str(L-2)] = dA_prev_temp
         self.grads["dW" + str(L-1)] = dW_temp
         self.grads["db" + str(L-1)] = db_temp
@@ -160,8 +175,8 @@ class neuralnet:
             # print('backprop:'+str(l), len(globalcache))
             current_cache = globalcache[l-1]
             dA_prev = copy.deepcopy(dA_prev_temp)
-            dA_prev_temp, dW_temp, db_temp = self.backprop_layer(dA_prev,
-                                                                 current_cache, self.act_hidden)
+            dA_prev_temp, dW_temp, db_temp = self.backprop_layer(dA_prev,Dprev,
+                                                                 current_cache, self.act_hidden,l)
             # self.grads["dA" + str(l-1)] = dA_prev_temp
             self.grads["dW" + str(l)] = dW_temp
             self.grads["db" + str(l)] = db_temp
@@ -229,7 +244,7 @@ class neuralnet:
 
     def predict(self, X):
         assert(X.shape[0] == self.layers[0])
-        AL, cache = self.fwd_model(X, self.parameters)
+        AL, cache = self.fwd_model(X, self.parameters,predict=True)
         # AL = np.around(AL)
         return AL
 
@@ -242,10 +257,10 @@ class neuralnet:
             parameters["b" + str(l+1)] = self.parameters['b'+str(l+1)] + e
         return parameters
 
-    def gradientcheck(self, X, Y):
-        '''incorrect'''
+    '''def gradientcheck(self, X, Y):
+       
         e = 1e-7
-        grads = np.array(list(self.grads.items()), dtype=object)[:, 1]
+        
         dtheta = np.concatenate([x.ravel() for x in grads])
         theta_f = self.perturb_param(e)
         theta_b = self.perturb_param(-e)
@@ -256,7 +271,13 @@ class neuralnet:
         dtheta_e = (Jf-Jb)/2/e
         dtheta = np.linalg.norm(dtheta, ord=2)
         return dtheta, dtheta_e
-        # return np.linalg.norm((dtheta-dtheta_e), ord=2)
+        # return np.linalg.norm((dtheta-dtheta_e), ord=2)'''
+        
+    def getWarray(self):
+        list1 = list(self.parameters.items())
+        array1=np.array(list1,dtype=object)[:,1]
+        warray=np.concatenate([x.ravel() for x in array1])
+        return warray
         
 def save_nn(obj,filename):
     file=open('filename'+'.nn','wb')

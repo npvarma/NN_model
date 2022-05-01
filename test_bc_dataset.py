@@ -32,28 +32,35 @@ Y_test = Y_test.T
 # end data read
 
 # hyper parameters
-iterations = 40000
+iterations = 10000
 learning_rate = 0.001
 act_hidden = 'leakyrelu'
 act_output = 'sigmoid'
 init = 'xavier'
-frequency = 2000
-conv_criteria = 0.01
+frequency = 1000
+conv_criteria = 0.001
 printoutput = True
 plot = False
 n_x = X_train.shape[0]
 n_y = Y_train.shape[0]
-layers = [n_x, 10, 5, 5, n_y]
+layers = [n_x, 5, 5, 5, n_y]
 
 # end hyper parameters
 
 NN1 = NN.neuralnet(layers, act_hidden, act_output, init)
+NN1.lam=0.00
+NN1.keep_prob=0.5
+
+
+
+#train
+
 cost, acc = NN1.train(X_train, Y_train, learning_rate, iterations, conv_criteria,
                       printoutput, plot, frequency)
 
 
 # print results
-print(acc)
+print("Cost at the end of training:"+str(cost))
 ypredict = NN1.predict(X_test)
 ypredict = np.around(ypredict)
 error = Y_test-ypredict
