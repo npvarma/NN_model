@@ -332,7 +332,7 @@ def save_nn(obj, filename):
     print("Saved")
 
 
-def load_nn(obj, filename):
+def load_nn(filename):
     file = open('filename'+'.nn', 'rb')
     pickle.load(file)
     print("Loaded")
